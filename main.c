@@ -45,10 +45,30 @@ void decode_and_execute(uint16_t instruction, struct State *state) {
     uint8_t N = (instruction & 0x000F);
     
     uint8_t NN = (instruction & 0x00FF);
-    uint8_t NNN = (instruction & 0x0FFF);
+    uint16_t NNN = (instruction & 0x0FFF);
 
     switch (first_nibble) {
-        
+        case 0x0:
+            //clear screen
+            memset(state->display_buf, 0, sizeof(state->display_buf));
+            break;
+        case 0x1:
+            //jump
+            state->PC = NNN;
+            break;
+        case 0x6:
+            //set register VX to NN
+            state->registers[X] = NN;
+            break;
+        case 0x7:
+            //add NN to register VX
+            state->registers[X] += NN;
+            break;
+        case 0xA:
+            //set register I to NNN
+            state->I = NNN;
+            break;
+         
     }
 
 }
