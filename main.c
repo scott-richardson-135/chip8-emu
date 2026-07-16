@@ -38,6 +38,21 @@ void print_state(struct State *state) {
 
 }
 
+void decode_and_execute(uint16_t instruction, struct State *state) {
+    uint8_t first_nibble = (instruction & 0xF000) >> 12;
+    uint8_t X = (instruction & 0x0F00) >> 8;
+    uint8_t Y = (instruction & 0x00F0) >> 4;
+    uint8_t N = (instruction & 0x000F);
+    
+    uint8_t NN = (instruction & 0x00FF);
+    uint8_t NNN = (instruction & 0x0FFF);
+
+    switch (first_nibble) {
+        
+    }
+
+}
+
 int main(int argc, char *argv[]) {
     
     if (argc != 2) {
@@ -51,6 +66,7 @@ int main(int argc, char *argv[]) {
 
 
     /*LOAD ROM*/
+    //TODO separate rom loading to its own function
     // maybe this needs some better handling if the file isn't right but I don't care right now
     FILE *rom_file = fopen(argv[1], "rb");
     if (rom_file == NULL) {
@@ -76,6 +92,20 @@ int main(int argc, char *argv[]) {
     }
 
     fclose(rom_file);
+
+    /*FETCH/DECODE/EXECUTE LOOP*/
+    while(1) {
+        //FETCH
+        /*this looks cooked, but to read 2 bytes from memory I read the first one in, then
+        shift that over and or with the next byte to combine to one 16 bit value*/
+        uint16_t instruction = ((uint16_t)state.memory[state.PC] << 8) | state.memory[state.PC + 1];
+
+        state.PC += 2; //increment program counter to be ready for next 
+
+        //decode and execute
+        decode_and_execute(instruction, &state);
+
+    }
 
     print_state(&state); //debug
     
